@@ -5,10 +5,7 @@
 git clone https://github.com/vmmax123/todo_prettytable.git
 ```
 
-navigate to the repository: 
-```
-cd todo_prettytable
-```
+
 
 ## Usage 
 
@@ -18,7 +15,7 @@ Functions:
 - 'A' adds a new task item
 - 'C' marks items as complete
 - 'D' deletes item
-- 'X' to quit and rest the list
+- 'X' to quit and reset the list
 
 - stores tasks as a .pkl 
 
