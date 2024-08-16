@@ -14,20 +14,48 @@ class Todo:
         self.title = title
         self.created_time = created_time
         self.is_complete = is_complete
+import os
+import pickle
+from prettytable import PrettyTable
+from datetime import datetime
+
+# Initialize list for to-do items
+todo_list = []
+# Filename for storing list items
+TODO_FILE = "todo_items.pkl"
+
+# TODO class
+class Todo:
+    def __init__(self, title, created_time, is_complete=False):
+        self.title = title
+        self.created_time = created_time
+        self.is_complete = is_complete
 
 # Write function to save todo_list to file
 def save_to_file():
-    with open(TODO_FILE, "wb") as file:
-        pickle.dump(todo_list, file)
+    try:
+        # write binaries
+        with open(TODO_FILE, "wb") as file:
+            pickle.dump(todo_list, file)
+    except Exception as e:
+        print(f"Error saving file to {e}")
 
 # Read function to load todo_list from file
 def read_from_file():
     global todo_list
     if os.path.exists(TODO_FILE):
-        with open(TODO_FILE, "rb") as file:
-            todo_list = pickle.load(file)
+        try:
+            # read binaries
+            with open(TODO_FILE, "rb") as file:
+                todo_list = pickle.load(file)
+        except (EOFError, pickle.UnpicklingError):
+            print("Error reading from file. File might be corrupted.")
+            todo_list = []
+        except Exception as e:
+            print(f"Error reading from file: {e}")
+            todo_list = []
 
-# Print all tasks
+# Print all tasks, generate table using PrettyTable
 def print_all_tasks():
     headers = ["ID", "Task", "Date Added", "Complete"]
     x = PrettyTable(headers)
@@ -38,7 +66,7 @@ def print_all_tasks():
 # Create a new item
 def add_task():
     title = input('Input task: ')
-    created_time = datetime.now().strftime("%d/%m/%y  %H:%M")
+    created_time = datetime.now().strftime("%d/%m/%y")
     todo_item = Todo(title, created_time)
     todo_list.append(todo_item)
     save_to_file()
@@ -71,6 +99,15 @@ def delete_task():
     except ValueError:
         print("Oops! Invalid input")
 
+# Reset list
+def reset_list():
+    global todo_list
+    todo_list = []
+    save_to_file()
+    print("Reset complete. Start new list.")
+    print_all_tasks()
+    input_options()
+
 def input_options():
     while True:
         user_input = input("Type: 'A' to add an item, 'C' to mark item as completed, 'D' to delete item, 'X' to exit ").upper()
@@ -82,6 +119,7 @@ def input_options():
             delete_task()
         elif user_input == 'X':
             print("Goodbye")
+            reset_list()
             break
         else:
             print("Invalid input. Try again.")
